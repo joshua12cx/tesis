@@ -18,14 +18,35 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    .resultado { border: 1px solid #C9D6DA; border-radius: 10px; padding: 1.2rem 1.4rem; background: #FFFFFF; }
-    .resultado .nivel { font-size: 1.6rem; font-weight: 700; }
-    .resultado .prob { font-size: 1rem; color: #4A5B61; margin-bottom: .9rem; }
-    .pista { position: relative; height: 16px; background: #E3EAEC; border-radius: 8px; overflow: visible; }
-    .relleno { height: 100%; border-radius: 8px; }
-    .umbral { position: absolute; top: -5px; width: 2px; height: 26px; background: #1B2A30; }
-    .escala { position: relative; height: 22px; margin-top: 8px; font-size: .8rem; color: #4A5B61; }
-    .escala span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+    footer, #MainMenu { visibility: hidden; }
+    .block-container { padding-top: 1.6rem; max-width: 1100px; }
+    h2, h3 { color: #0F3D4C; letter-spacing: -0.01em; }
+    [data-testid="stSidebar"] { border-right: 1px solid #D5E0E4; }
+    [data-testid="stSidebar"] h2 { font-size: 1.15rem; }
+    [data-testid="stSidebar"] h3 { font-size: .95rem; color: #1F6F82; border-bottom: 1px solid #D5E0E4; padding-bottom: .3rem; margin-top: .8rem; }
+    [data-testid="stMetric"] { background: #FFFFFF; border: 1px solid #D5E0E4; border-radius: 10px; padding: .8rem 1rem; }
+    button[role="tab"] { font-weight: 600; }
+
+    .cabecera { background: #0F3D4C; border-radius: 12px; padding: 1.4rem 1.8rem; margin-bottom: 1.3rem;
+                display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .cabecera .titulo { color: #FFFFFF; font-size: 1.7rem; font-weight: 700; line-height: 1.2; }
+    .cabecera .subtitulo { color: #CFE3E8; font-size: .95rem; margin-top: .35rem; max-width: 46rem; }
+    .cabecera .sello { border: 1px solid #6FA8B5; color: #DCEEF2; border-radius: 999px; padding: .25rem .85rem; font-size: .8rem; white-space: nowrap; }
+
+    .resultado { background: #FFFFFF; border: 1px solid #D5E0E4; border-left: 6px solid var(--c); border-radius: 10px; padding: 1.3rem 1.6rem; }
+    .resultado .fila { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .resultado .nivel { font-size: 1.7rem; font-weight: 700; }
+    .resultado .chip { color: #FFFFFF; font-weight: 600; font-size: .85rem; border-radius: 999px; padding: .3rem .9rem; }
+    .resultado .prob { color: #3F5158; margin: .5rem 0 1.4rem; }
+    .escala { position: relative; display: flex; height: 14px; }
+    .escala .zona:first-child { border-radius: 7px 0 0 7px; }
+    .escala .zona:nth-child(3) { border-radius: 0 7px 7px 0; }
+    .escala .punto { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: #0F3D4C;
+                     border: 3px solid #FFFFFF; box-shadow: 0 0 0 1px #0F3D4C; transform: translate(-50%, -50%); }
+    .leyenda { display: flex; margin-top: .55rem; font-size: .8rem; color: #3F5158; }
+    .leyenda span { text-align: center; }
+
+    .aviso { border-top: 1px solid #D5E0E4; margin-top: 1.5rem; padding-top: .8rem; font-size: .85rem; color: #3F5158; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -120,7 +141,7 @@ def nivel_riesgo(p: float):
     if p < THRESHOLD * 0.6:
         return "Riesgo bajo", "#2E7D5B"
     if p < THRESHOLD:
-        return "Riesgo intermedio", "#B7791F"
+        return "Riesgo intermedio", "#9A6412"
     return "Riesgo alto", "#B23A48"
 
 
@@ -154,23 +175,22 @@ def sensibilidad(registro: dict, proba_base: float) -> pd.DataFrame:
 
 def tarjeta_resultado(p: float, label: str):
     nivel, color = nivel_riesgo(p)
-    umbral_pct = THRESHOLD * 100
+    a = THRESHOLD * 0.6 * 100
+    b = THRESHOLD * 100
     st.markdown(
         f"""
-        <div class="resultado">
-          <div class="nivel" style="color:{color}">{nivel}</div>
-          <div class="prob">Probabilidad estimada: <b>{p:.1%}</b> · El modelo clasifica: <b>{label}</b></div>
-          <div class="pista">
-            <div class="relleno" style="width:{p*100:.1f}%; background:{color}"></div>
-            <div class="umbral" style="left:{umbral_pct:.1f}%"></div>
-          </div>
-          <div class="escala">
-            <span style="left:0%">0%</span>
-            <span style="left:{umbral_pct:.1f}%">umbral {umbral_pct:.0f}%</span>
-            <span style="left:100%">100%</span>
-          </div>
-        </div>
-        """,
+<div class="resultado" style="--c:{color}">
+<div class="fila"><div class="nivel" style="color:{color}">{nivel}</div><div class="chip" style="background:{color}">{label}</div></div>
+<div class="prob">Probabilidad estimada: <b>{p:.1%}</b>. Umbral de decisión del modelo: {THRESHOLD:.2f}.</div>
+<div class="escala">
+<div class="zona" style="width:{a:.1f}%; background:#CFE8DC"></div>
+<div class="zona" style="width:{b - a:.1f}%; background:#F3E2BD"></div>
+<div class="zona" style="width:{100 - b:.1f}%; background:#F2CDD1"></div>
+<div class="punto" style="left:{p * 100:.1f}%"></div>
+</div>
+<div class="leyenda"><span style="width:{a:.1f}%">Bajo</span><span style="width:{b - a:.1f}%">Intermedio</span><span style="width:{100 - b:.1f}%">Alto</span></div>
+</div>
+""",
         unsafe_allow_html=True,
     )
 
@@ -178,10 +198,17 @@ def tarjeta_resultado(p: float, label: str):
 # ==========================================
 # ENCABEZADO
 # ==========================================
-st.title("Riesgo de preeclampsia en gestantes")
-st.write(
-    "Estimación del riesgo con un modelo de red neuronal (MLP) a partir de nueve datos clínicos. "
-    "Es un prototipo académico de apoyo a la decisión."
+st.markdown(
+    """
+    <div class="cabecera">
+      <div>
+        <div class="titulo">Riesgo de preeclampsia en gestantes</div>
+        <div class="subtitulo">Estimación con un modelo de red neuronal a partir de nueve datos clínicos. Herramienta de apoyo a la decisión.</div>
+      </div>
+      <div class="sello">Prototipo académico</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 # ==========================================
@@ -284,7 +311,7 @@ with tab_pred:
                 width="stretch",
             )
 
-    st.caption("Este sistema es solo apoyo a la decisión clínica y no reemplaza el criterio médico.")
+    st.markdown('<div class="aviso">Este sistema es solo apoyo a la decisión clínica y no reemplaza el criterio médico.</div>', unsafe_allow_html=True)
 
 # ---------- Pestaña 2: carga por lote ----------
 with tab_lote:
