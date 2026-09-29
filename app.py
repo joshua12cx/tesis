@@ -18,35 +18,46 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+    :root { --teal: #2dd4bf; --muted: #6b93bc; --line: rgba(45,212,191,.18); --card: #0a1628; }
+    .stApp { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .titulo, .nivel, .card-t { font-family: 'Outfit', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
     footer, #MainMenu { visibility: hidden; }
-    .block-container { padding-top: 1.6rem; max-width: 1100px; }
-    h2, h3 { color: #0F3D4C; letter-spacing: -0.01em; }
-    [data-testid="stSidebar"] { border-right: 1px solid #D5E0E4; }
-    [data-testid="stSidebar"] h2 { font-size: 1.15rem; }
-    [data-testid="stSidebar"] h3 { font-size: .95rem; color: #1F6F82; border-bottom: 1px solid #D5E0E4; padding-bottom: .3rem; margin-top: .8rem; }
-    [data-testid="stMetric"] { background: #FFFFFF; border: 1px solid #D5E0E4; border-radius: 10px; padding: .8rem 1rem; }
+    .block-container { padding-top: 2rem; max-width: 1150px; }
     button[role="tab"] { font-weight: 600; }
+    [data-testid="stMetric"] { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: .8rem 1rem; }
 
-    .cabecera { background: #0F3D4C; border-radius: 12px; padding: 1.4rem 1.8rem; margin-bottom: 1.3rem;
-                display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .cabecera .titulo { color: #FFFFFF; font-size: 1.7rem; font-weight: 700; line-height: 1.2; }
-    .cabecera .subtitulo { color: #CFE3E8; font-size: .95rem; margin-top: .35rem; max-width: 46rem; }
-    .cabecera .sello { border: 1px solid #6FA8B5; color: #DCEEF2; border-radius: 999px; padding: .25rem .85rem; font-size: .8rem; white-space: nowrap; }
+    .cabecera { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .cabecera .titulo { font-size: 2rem; font-weight: 700; color: #e8f0fe; line-height: 1.15; }
+    .cabecera .subtitulo { color: var(--muted); margin-top: .4rem; max-width: 42rem; }
+    .cabecera .sello { border: 1px solid var(--line); color: var(--teal); border-radius: 999px; padding: .25rem .85rem; font-size: .8rem; white-space: nowrap; }
 
-    .resultado { background: #FFFFFF; border: 1px solid #D5E0E4; border-left: 6px solid var(--c); border-radius: 10px; padding: 1.3rem 1.6rem; }
-    .resultado .fila { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .resultado .nivel { font-size: 1.7rem; font-weight: 700; }
-    .resultado .chip { color: #FFFFFF; font-weight: 600; font-size: .85rem; border-radius: 999px; padding: .3rem .9rem; }
-    .resultado .prob { color: #3F5158; margin: .5rem 0 1.4rem; }
-    .escala { position: relative; display: flex; height: 14px; }
-    .escala .zona:first-child { border-radius: 7px 0 0 7px; }
-    .escala .zona:nth-child(3) { border-radius: 0 7px 7px 0; }
-    .escala .punto { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: #0F3D4C;
-                     border: 3px solid #FFFFFF; box-shadow: 0 0 0 1px #0F3D4C; transform: translate(-50%, -50%); }
-    .leyenda { display: flex; margin-top: .55rem; font-size: .8rem; color: #3F5158; }
-    .leyenda span { text-align: center; }
+    div[data-testid="stVerticalBlockBorderWrapper"]:has(.card-t):not(:has(div[data-testid="stVerticalBlockBorderWrapper"])) {
+        background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: .4rem .6rem; }
+    .card-t { font-size: 1.05rem; font-weight: 600; color: var(--teal); margin-bottom: .2rem; }
 
-    .aviso { border-top: 1px solid #D5E0E4; margin-top: 1.5rem; padding-top: .8rem; font-size: .85rem; color: #3F5158; }
+    [data-testid="stHorizontalBlock"]:has(.panel-ancla) { align-items: flex-start; }
+    [data-testid="stColumn"]:has(.panel-ancla), [data-testid="column"]:has(.panel-ancla) { position: sticky; top: 3.5rem; }
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 1.5rem 1.4rem; text-align: center; animation: entra .5s ease both; }
+    .gauge { position: relative; width: 200px; height: 200px; margin: 0 auto .8rem; border-radius: 50%; }
+    .gauge.alto { animation: pulso 2s infinite; }
+    .gauge .arco { animation: llenar 1s ease-out both; }
+    .gauge-n { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .gauge-p { font-size: 2.3rem; font-weight: 500; color: #e8f0fe; }
+    .gauge-l { font-size: .8rem; color: var(--muted); }
+    .panel .nivel { font-size: 1.5rem; font-weight: 700; }
+    .panel .chip { display: inline-block; margin: .5rem 0 .2rem; border: 1px solid var(--c); color: var(--c); border-radius: 999px; padding: .2rem .8rem; font-size: .85rem; font-weight: 600; }
+    .panel .sub { font-size: .8rem; color: var(--muted); }
+    .panel .sec { text-align: left; font-size: .8rem; color: var(--muted); border-top: 1px solid var(--line); margin-top: 1.1rem; padding-top: .9rem; }
+    .fac { display: flex; justify-content: space-between; padding: .3rem 0; font-size: .92rem; color: #e8f0fe; }
+    .fac-vacio { text-align: left; font-size: .9rem; color: var(--muted); padding: .3rem 0; }
+    .panel .nota { text-align: left; font-size: .88rem; color: #b9cde4; margin-top: .9rem; background: #0f2040; border-radius: 10px; padding: .7rem .9rem; }
+    .aviso { border-top: 1px solid var(--line); margin-top: 1.5rem; padding-top: .8rem; font-size: .85rem; color: var(--muted); }
+
+    @keyframes llenar { from { stroke-dashoffset: 427.26; } }
+    @keyframes entra { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(251,113,133,.4); } 70% { box-shadow: 0 0 0 16px rgba(251,113,133,0); } 100% { box-shadow: 0 0 0 0 rgba(251,113,133,0); } }
     </style>
     """,
     unsafe_allow_html=True,
@@ -139,10 +150,10 @@ def predict_batch(records, thr=None):
 def nivel_riesgo(p: float):
     """Nivel de lectura y color. El corte 'Alto' coincide con el umbral del modelo."""
     if p < THRESHOLD * 0.6:
-        return "Riesgo bajo", "#2E7D5B"
+        return "Riesgo bajo", "#2dd4bf"
     if p < THRESHOLD:
-        return "Riesgo intermedio", "#9A6412"
-    return "Riesgo alto", "#B23A48"
+        return "Riesgo intermedio", "#fbbf24"
+    return "Riesgo alto", "#fb7185"
 
 
 def sensibilidad(registro: dict, proba_base: float) -> pd.DataFrame:
@@ -173,26 +184,46 @@ def sensibilidad(registro: dict, proba_base: float) -> pd.DataFrame:
     return df.reindex(df["Efecto (puntos %)"].abs().sort_values(ascending=False).index).reset_index(drop=True)
 
 
-def tarjeta_resultado(p: float, label: str):
+def panel_resultado(res: dict, sens: pd.DataFrame):
+    p = res["proba"]
     nivel, color = nivel_riesgo(p)
-    a = THRESHOLD * 0.6 * 100
-    b = THRESHOLD * 100
+    C = 427.26
+    top = sens[sens["Efecto (puntos %)"].abs() >= 0.5].head(4)
+    if top.empty:
+        filas = '<div class="fac-vacio">Ningún dato, modificado por separado, cambia la estimación.</div>'
+    else:
+        filas = "".join(
+            f'<div class="fac"><span>{r["Dato"]}</span><span class="mono">{r["Efecto (puntos %)"]:+.1f} pts</span></div>'
+            for _, r in top.iterrows()
+        )
+    nota = {
+        "Riesgo bajo": "Con estos datos el modelo no detecta señales de riesgo.",
+        "Riesgo intermedio": "Estimación cercana al umbral. Conviene revisar los datos ingresados y considerar seguimiento.",
+        "Riesgo alto": "El modelo detecta un patrón asociado a riesgo. Se sugiere valoración clínica.",
+    }[nivel]
+    clase = "alto" if nivel == "Riesgo alto" else ""
     st.markdown(
         f"""
-<div class="resultado" style="--c:{color}">
-<div class="fila"><div class="nivel" style="color:{color}">{nivel}</div><div class="chip" style="background:{color}">{label}</div></div>
-<div class="prob">Probabilidad estimada: <b>{p:.1%}</b>. Umbral de decisión del modelo: {THRESHOLD:.2f}.</div>
-<div class="escala">
-<div class="zona" style="width:{a:.1f}%; background:#CFE8DC"></div>
-<div class="zona" style="width:{b - a:.1f}%; background:#F3E2BD"></div>
-<div class="zona" style="width:{100 - b:.1f}%; background:#F2CDD1"></div>
-<div class="punto" style="left:{p * 100:.1f}%"></div>
-</div>
-<div class="leyenda"><span style="width:{a:.1f}%">Bajo</span><span style="width:{b - a:.1f}%">Intermedio</span><span style="width:{100 - b:.1f}%">Alto</span></div>
+<div class="panel" style="--c:{color}">
+<div class="gauge {clase}"><svg viewBox="0 0 160 160" width="200" height="200">
+<circle cx="80" cy="80" r="68" fill="none" stroke="#162d57" stroke-width="12"/>
+<circle class="arco" cx="80" cy="80" r="68" fill="none" stroke="{color}" stroke-width="12" stroke-linecap="round" stroke-dasharray="{C}" stroke-dashoffset="{C * (1 - p):.1f}" transform="rotate(-90 80 80)"/>
+</svg><div class="gauge-n"><div class="gauge-p mono">{p:.0%}</div><div class="gauge-l">probabilidad</div></div></div>
+<div class="nivel" style="color:{color}">{nivel}</div>
+<div class="chip">El modelo clasifica: {res["pred_label"]}</div>
+<div class="sub">Umbral de decisión: {THRESHOLD:.2f}</div>
+<div class="sec">Datos que más mueven la estimación (uno a la vez, +10 % o el valor contrario)</div>
+{filas}
+<div class="nota">{nota}</div>
 </div>
 """,
         unsafe_allow_html=True,
     )
+
+
+def si_no(etiqueta: str, clave: str) -> str:
+    valor = st.segmented_control(etiqueta, ["NO", "SI"], default="NO", key=clave)
+    return valor or "NO"
 
 
 # ==========================================
@@ -203,7 +234,7 @@ st.markdown(
     <div class="cabecera">
       <div>
         <div class="titulo">Riesgo de preeclampsia en gestantes</div>
-        <div class="subtitulo">Estimación con un modelo de red neuronal a partir de nueve datos clínicos. Herramienta de apoyo a la decisión.</div>
+        <div class="subtitulo">Estimación en tiempo real con un modelo de red neuronal a partir de nueve datos clínicos. Mueve cualquier dato y el resultado se actualiza.</div>
       </div>
       <div class="sello">Prototipo académico</div>
     </div>
@@ -212,104 +243,60 @@ st.markdown(
 )
 
 # ==========================================
-# BARRA LATERAL: DATOS DE LA PACIENTE
-# ==========================================
-with st.sidebar:
-    st.header("Datos de la paciente")
-    with st.form("form_paciente"):
-        st.subheader("Datos generales")
-        edad = st.number_input("Edad (años)", 10, 60, 30, help="Entre 10 y 60 años.")
-        imc = st.number_input("IMC (kg/m²)", 10.0, 60.0, 25.0, step=0.1, help="Índice de masa corporal.")
-        creatinina = st.number_input("Creatinina (mg/dL)", 0.1, 10.0, 1.0, step=0.01, help="Entre 0.1 y 10 mg/dL.")
-
-        st.subheader("Presión arterial")
-        p_a_sistolica = st.number_input("Sistólica (mmHg)", 80, 200, 120, help="Entre 80 y 200 mmHg.")
-        p_a_diastolica = st.number_input("Diastólica (mmHg)", 40, 130, 80, help="Entre 40 y 130 mmHg.")
-
-        st.subheader("Antecedentes")
-        hipertension = st.radio("Hipertensión previa", ["NO", "SI"], horizontal=True)
-        diabetes = st.radio("Diabetes", ["NO", "SI"], horizontal=True)
-        ant_fam_hiper = st.radio("Antecedentes familiares de hipertensión", ["NO", "SI"], horizontal=True)
-        tec_repro_asistida = st.radio("Reproducción asistida", ["NO", "SI"], horizontal=True)
-
-        enviado = st.form_submit_button("Calcular riesgo", type="primary", width="stretch")
-
-registro = {
-    "edad": int(edad),
-    "imc": float(imc),
-    "p_a_sistolica": int(p_a_sistolica),
-    "p_a_diastolica": int(p_a_diastolica),
-    "hipertension": hipertension,
-    "diabetes": diabetes,
-    "creatinina": float(creatinina),
-    "ant_fam_hiper": ant_fam_hiper,
-    "tec_repro_asistida": tec_repro_asistida,
-}
-
-# ==========================================
-# VALIDACIÓN Y CÁLCULO (al enviar el formulario)
-# ==========================================
-if enviado:
-    errores, avisos = [], []
-    if p_a_sistolica <= p_a_diastolica:
-        errores.append("La presión sistólica debe ser mayor que la diastólica.")
-    if hipertension == "NO" and (p_a_sistolica >= 140 or p_a_diastolica >= 90):
-        avisos.append(
-            "Indicaste que no hay hipertensión previa, pero la presión ingresada está en rango hipertensivo "
-            "(≥140/90 mmHg). Revisa que los datos sean correctos."
-        )
-    st.session_state["errores"] = errores
-    st.session_state["avisos"] = avisos
-    if errores:
-        st.session_state.pop("resultado", None)
-    else:
-        res = predict_batch(registro)[0]
-        st.session_state["resultado"] = res
-        st.session_state["registro"] = dict(registro)
-        st.session_state["sens"] = sensibilidad(registro, res["proba"])
-
-# ==========================================
 # PESTAÑAS
 # ==========================================
 tab_pred, tab_lote, tab_modelo = st.tabs(["Predicción", "Carga por lote", "Acerca del modelo"])
 
-# ---------- Pestaña 1: predicción individual ----------
+# ---------- Pestaña 1: predicción en vivo ----------
 with tab_pred:
-    for e in st.session_state.get("errores", []):
-        st.error(e)
-    for a in st.session_state.get("avisos", []):
-        st.warning(a)
+    col_form, col_res = st.columns([1.45, 1], gap="large")
 
-    if "resultado" not in st.session_state:
-        if not st.session_state.get("errores"):
-            st.info("Completa los datos en la barra lateral y presiona **Calcular riesgo**.")
-    else:
-        res = st.session_state["resultado"]
-        tarjeta_resultado(res["proba"], res["pred_label"])
+    with col_form:
+        with st.container(border=True):
+            st.markdown('<div class="card-t">Datos maternos</div>', unsafe_allow_html=True)
+            edad = st.slider("Edad (años)", 10, 60, 30)
+            imc = st.slider("IMC (kg/m²)", 10.0, 60.0, 25.0, step=0.1)
+        with st.container(border=True):
+            st.markdown('<div class="card-t">Presión arterial</div>', unsafe_allow_html=True)
+            p_a_sistolica = st.slider("Presión sistólica (mmHg)", 80, 200, 120)
+            p_a_diastolica = st.slider("Presión diastólica (mmHg)", 40, 130, 80)
+        with st.container(border=True):
+            st.markdown('<div class="card-t">Laboratorio</div>', unsafe_allow_html=True)
+            creatinina = st.slider("Creatinina (mg/dL)", 0.3, 5.0, 1.0, step=0.01)
+        with st.container(border=True):
+            st.markdown('<div class="card-t">Antecedentes</div>', unsafe_allow_html=True)
+            a1, a2 = st.columns(2)
+            with a1:
+                hipertension = si_no("Hipertensión previa", "hta")
+                ant_fam_hiper = si_no("Antecedentes familiares de hipertensión", "fam")
+            with a2:
+                diabetes = si_no("Diabetes", "dm")
+                tec_repro_asistida = si_no("Reproducción asistida", "tra")
 
-        st.write("")
-        st.subheader("¿Qué datos mueven más la estimación?")
-        st.caption(
-            "Se cambia un dato a la vez (los numéricos +10 %, los de SI/NO al valor contrario) "
-            "y se mide cuánto varía la probabilidad para esta paciente. Es una simulación, no prueba causalidad."
-        )
-        sens = st.session_state["sens"]
-        st.dataframe(
-            sens,
-            hide_index=True,
-            width="stretch",
-            column_config={
-                "Efecto (puntos %)": st.column_config.NumberColumn(format="%+.1f"),
-            },
-        )
+    registro = {
+        "edad": int(edad),
+        "imc": float(imc),
+        "p_a_sistolica": int(p_a_sistolica),
+        "p_a_diastolica": int(p_a_diastolica),
+        "hipertension": hipertension,
+        "diabetes": diabetes,
+        "creatinina": float(creatinina),
+        "ant_fam_hiper": ant_fam_hiper,
+        "tec_repro_asistida": tec_repro_asistida,
+    }
 
-        with st.expander("Datos ingresados"):
-            r = st.session_state["registro"]
-            st.dataframe(
-                pd.DataFrame({"Dato": [ETIQUETAS[k] for k in r], "Valor": [str(v) for v in r.values()]}),
-                hide_index=True,
-                width="stretch",
-            )
+    with col_res:
+        st.markdown('<div class="panel-ancla"></div>', unsafe_allow_html=True)
+        if p_a_sistolica <= p_a_diastolica:
+            st.error("La presión sistólica debe ser mayor que la diastólica.")
+        else:
+            res = predict_batch(registro)[0]
+            panel_resultado(res, sensibilidad(registro, res["proba"]))
+            if hipertension == "NO" and (p_a_sistolica >= 140 or p_a_diastolica >= 90):
+                st.warning(
+                    "Indicaste que no hay hipertensión previa, pero la presión está en rango hipertensivo "
+                    "(≥140/90 mmHg). Revisa que los datos sean correctos."
+                )
 
     st.markdown('<div class="aviso">Este sistema es solo apoyo a la decisión clínica y no reemplaza el criterio médico.</div>', unsafe_allow_html=True)
 
